@@ -1,0 +1,80 @@
+PM_LIB counter API
+
+The API gives you access to the Cray XC Power Monitoring counters
+from C and Fortran.
+The Fortran interface requires Fortran 2008 and ISO/IEC TS 29113:2012
+
+The basic use of the API works is shows below with C examples.
+
+ pm_init()
+ c=pm_get_energy()
+ pm_close()
+
+The following counters are available
+
+  API KEY                     Label
+  -------------------------------------------
+  PM_COUNTER_FRESHNESS        freshness
+  PM_COUNTER_POWER            power
+  PM_COUNTER_ENERGY           energy
+  PM_COUNTER_ACCEL_POWER      accel_power
+  PM_COUNTER_ACCEL_ENERGY     accel_energy
+  PM_COUNTER_STARTUP          startup
+  PM_COUNTER_POWER_CAP        power_cap
+  PM_COUNTER_ACCEL_POWER_CAP  accel_power_cap
+
+Each counter has a direct accessor function but these
+should probably not be used to read more than one counter
+at a time.
+
+Alternatively you can read the first n counters or
+a selection of counters using the following calls..
+
+int pm_get_counters_firstn(int n,pm_counter_value *v,int atomic);
+int pm_get_counters(int n,pm_counter_e *counters,pm_counter_value *v,
+                    int atomic);
+
+These return the number of counter values successfully returned.
+Note that you should read freshness before and after reading
+multiple counters and setting atomic=1 will ensure these calls
+do this.
+If an atomic read proves impossible within the number of
+retries allowed then 0 will be returned.
+
+pm_get_num_operncounters returns the number of open counters
+and pm_get_counter_label returns the label (char *)
+associated with a given counter key.
+
+You can initialize a subset of counters using
+
+  pm_init_counters(n,counters);
+
+This is an efficiency measure otherwise all counter files are held
+open. 
+
+Note that reading a counter not opened returns 0.
+
+THE FORTRAN INTERFACE
+
+The pm_lib module provides the Fortran interface so include
+the line 'use pm_lib' or variants in your source.  There are
+some differences between the Fortran and C API.
+
+pm_get_counter_label returns the label in the second 
+argument (character).
+
+pm_init can be used with and without a counters argument.
+
+COMPILING
+
+At the moment you just have to compile the files 
+directly into your application.
+
+Look at the Makefile to see how pm_test.c and pm_testf.c are 
+built with the library.
+
+MORE INFORMATION
+
+Look at the two test examples for sample usage patterns.
+
+

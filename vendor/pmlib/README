@@ -1,0 +1,18 @@
+Power Monitoring library : pm_lib
+
+This software is a simple API that end users can use to
+read the Cray XC Power Monitoring counters.
+
+IT IS NOT OFFICIAL CRAY SOFTWARE AND IS ONLY TO BE USED
+WITHIN OR DISTRIBUTED BY THE EU CRESTA RESEARCH PROJECT
+UNDER THE CONDITIONS NOTED NEXT.
+
+This software is distributed under the license provided
+in the LICENSE file elsewhere in the distribution.
+
+See the USAGE file for information on using the API
+Note that you can test using the sys/ files here if
+you change the definition for syspmcdir in pm_lib.c 
+although returned values will of course not change.
+
+-- Harvey Richardson, Cray UK Ltd, September 2014
