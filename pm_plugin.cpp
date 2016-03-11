@@ -1,20 +1,28 @@
 /*
-   libpm_plugin.so,
-   a library to monitor energy and power counter on Cray machines.
-   Copyright (C) 2014 TU Dresden, ZIH
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License, v2, as
-   published by the Free Software Foundation
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Copyright (c) 2016, Technische Universität Dresden, Germany
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions
+ *    and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions
+ *    and the following disclaimer in the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse
+ *    or promote products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include <iostream>
@@ -70,7 +78,7 @@ public:
 
     void stop()
     {
-        if ( running() ) 
+        if ( running() )
         {
             m_run = false;
 
@@ -90,7 +98,7 @@ public:
         }
     }
 
-    bool running() 
+    bool running()
     {
         return m_run;
     }
@@ -104,11 +112,11 @@ private:
         auto freshness_first = pm_get_freshness();
 #endif
         auto energy_first = pm_get_energy();
- 
+
         uint64_t accel_energy_first, accel_energy;
         int64_t accel_power;
 
-        if ( has_accel() ) 
+        if ( has_accel() )
            accel_energy_first = pm_get_accel_energy();
 
         auto old_freshness = 0;
@@ -120,21 +128,21 @@ private:
             auto freshness_before = pm_get_freshness();
 
             if ( freshness_before > old_freshness ) {
-               
+
                 auto power = pm_get_power();
                 auto energy = pm_get_energy();
-               
+
                 if ( has_accel() ) {
                     accel_power  = pm_get_accel_power();
                     accel_energy = pm_get_accel_energy();
                 }
-               
+
                 auto freshness_after = pm_get_freshness();
 
 #ifdef ENABLE_MEASURETIMER_COUNTER
                 auto timestamp_after = get_scorep_time();
 #endif
-               
+
                 if(freshness_after == freshness_before )
                 {
                     values[PM_NCOUNTERS].push_back(timestamp);
@@ -150,9 +158,9 @@ private:
                     values[PM_ACCEL_POWER].push_back(accel_power);
                     values[PM_ACCEL_ENERGY].push_back(accel_energy - accel_energy_first);
                     }
-                
+
                     old_freshness = freshness_after;
-                    
+
                 }
                 else
                 {
@@ -161,7 +169,7 @@ private:
                     continue;
                 }
             }
-            
+
             std::this_thread::sleep_until(start + (i+1)*INTERVAL);
         }
     }
@@ -201,13 +209,13 @@ int32_t init()
     if ( monitoring_mode > 0 )
     {
        values[PM_NCOUNTERS] = std::vector<std::uint64_t>();
-       
+
 #ifdef ENABLE_MEASURETIMER_COUNTER
        values[PM_NCOUNTERS+1] = std::vector<std::uint64_t>();
 #endif
     }
 
-    if ( has_board() ) 
+    if ( has_board() )
     {
        values[PM_POWER]     = std::vector<std::uint64_t>();
        values[PM_ENERGY]    = std::vector<std::uint64_t>();
@@ -215,7 +223,7 @@ int32_t init()
        values[PM_FRESHNESS] = std::vector<std::uint64_t>();
 #endif
     }
-    
+
     if ( has_accel() )
     {
        values[PM_ACCEL_POWER]  = std::vector<std::uint64_t>();
@@ -244,29 +252,29 @@ scorep_metric_event_id_t add_counter( char * event_name )
         start_measure();
 
     std::string event(event_name);
-    
+
     if( event == "pm/power")
         return PM_POWER;
-    
-    if( event == "pm/energy") 
+
+    if( event == "pm/energy")
         return PM_ENERGY;
-    
+
     if( event == "pm/freshness")
         return PM_FRESHNESS;
-    
+
     if( event == "pm/accel_power")
         return PM_ACCEL_POWER;
-    
+
     if( event == "pm/accel_energy")
         return PM_ACCEL_ENERGY;
-    
+
 #ifdef ENABLE_MEASURETIME_COUNTER
     if( event == "pm/measurement time")
         return PM_NCOUNTERS+1;
 #endif
-    
+
     std::cerr << " unknown counter: " << event << std::endl;
-    
+
     return -1;
 }
 
@@ -274,13 +282,13 @@ scorep_metric_event_id_t add_counter( char * event_name )
  * This funtions tells scorep some informations for each channel
  */
 SCOREP_Metric_Plugin_MetricProperties* get_event_info( char * event_name )
-{    
+{
     scorep_metric_event_id_t num_counters = 1;
 
     if (has_board())
         num_counters += 2;
-    
-    if (has_accel()) 
+
+    if (has_accel())
         num_counters += 2;
 
 #ifdef ENABLE_MEASURETIMER_COUNTER
@@ -290,15 +298,15 @@ SCOREP_Metric_Plugin_MetricProperties* get_event_info( char * event_name )
 #ifdef ENABLE_FRESHNESS_COUNTER
     num_counters++;
 #endif
-    
-    
+
+
     SCOREP_Metric_Plugin_MetricProperties * return_values = allocate_c_memory<SCOREP_Metric_Plugin_MetricProperties>(num_counters);
 
     scorep_metric_event_id_t k = 0;
-    
+
     if(has_board())
     {
-    
+
         return_values[ k ].name        = strdup("pm/energy");
         return_values[ k ].description = NULL;
         return_values[ k ].unit        = strdup("J");
@@ -308,7 +316,7 @@ SCOREP_Metric_Plugin_MetricProperties* get_event_info( char * event_name )
         return_values[ k ].exponent    = 0;
 
         k++;
-        
+
         return_values[ k ].name        = strdup("pm/power");
         return_values[ k ].description = NULL;
         return_values[ k ].unit        = strdup("W");
@@ -328,11 +336,11 @@ SCOREP_Metric_Plugin_MetricProperties* get_event_info( char * event_name )
     return_values[ k ].value_type  = SCOREP_METRIC_VALUE_INT64;
     return_values[ k ].base        = SCOREP_METRIC_BASE_DECIMAL;
     return_values[ k ].exponent    = 0;
-    
+
     k++;
 #endif
 
-    if ( has_accel() ) 
+    if ( has_accel() )
     {
         return_values[ k ].name        = strdup("pm/accel_energy");
         return_values[ k ].description = NULL;
@@ -343,7 +351,7 @@ SCOREP_Metric_Plugin_MetricProperties* get_event_info( char * event_name )
         return_values[ k ].exponent    = 0;
 
         k++;
-        
+
         return_values[ k ].name        = strdup("pm/accel_power");
         return_values[ k ].description = NULL;
         return_values[ k ].unit        = strdup("W");
@@ -351,7 +359,7 @@ SCOREP_Metric_Plugin_MetricProperties* get_event_info( char * event_name )
         return_values[ k ].value_type  = SCOREP_METRIC_VALUE_INT64;
         return_values[ k ].base        = SCOREP_METRIC_BASE_DECIMAL;
         return_values[ k ].exponent    = 0;
-        
+
         k++;
     }
 #ifdef ENABLE_MEASURETIMER_COUNTER
@@ -366,7 +374,7 @@ SCOREP_Metric_Plugin_MetricProperties* get_event_info( char * event_name )
 
     k++;
 #endif
-    
+
     return_values[ k ].name      = NULL;
 
     assert( (k+1) == num_counters );
@@ -378,7 +386,7 @@ SCOREP_Metric_Plugin_MetricProperties* get_event_info( char * event_name )
  * all work is done in the destructors, so this function is empty
  */
 void finalize()
-{  
+{
     pm_close();
 }
 

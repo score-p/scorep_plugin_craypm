@@ -1,21 +1,28 @@
 /*
-   libpm_plugin.so,
-   a library to monitor energy and power counter on Cray machines.
-   Copyright (C) 2014 TU Dresden, ZIH
-   Copyright (C) 2014 Cray Inc.
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License, v2, as
-   published by the Free Software Foundation
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Copyright (c) 2016, Technische Universität Dresden, Germany
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions
+ *    and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions
+ *    and the following disclaimer in the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse
+ *    or promote products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include <unistd.h>
@@ -24,7 +31,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include "pm_lib.h" 
+#include "pm_lib.h"
 
 /* Files are
  *
@@ -70,12 +77,12 @@ int pm_init(){
       if ( (fps[k]=fopen(file,"r"))==NULL){
         fprintf(stderr,"pm_lib(pm_init): Unable to open %s\n",file);
         exists[k] = 0;
-      }else { 
+      }else {
         exists[k] = 1;
       }
     }
   }
- 
+
   k = 0;
 
   if( exists[PM_FRESHNESS] == 1 && exists[PM_POWER] == 1 && exists[PM_ENERGY] == 1 && exists[PM_STARTUP]) k+=1;
@@ -105,7 +112,7 @@ int pm_get_freshness(){
 
   fgetfirstline(input_line,MAXLLEN,fps[PM_FRESHNESS]);
   freshness=atoi(input_line);
-  
+
   return freshness;
 
 }
@@ -116,7 +123,7 @@ int pm_get_power(){
 
   fgetfirstline(input_line,MAXLLEN,fps[PM_POWER]);
   power=atoi(input_line);
-  
+
   return power;
 
 }
@@ -149,7 +156,7 @@ unsigned long long int pm_get_energy(){
 
   fgetfirstline(input_line,MAXLLEN,fps[PM_ENERGY]);
   energy=strtoull(input_line,NULL,10);
-  
+
   return energy;
 
 }
@@ -160,7 +167,7 @@ unsigned long long int pm_get_startup(){
 
   fgetfirstline(input_line,MAXLLEN,fps[PM_STARTUP]);
   startup = strtoull(input_line,NULL,10);
-  
+
   return startup;
 
 }
