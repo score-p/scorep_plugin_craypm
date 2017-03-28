@@ -1,8 +1,8 @@
-#PM Plugin for Score-P
+# PM Plugin for Score-P
 
-##Compilation and Installation
+## Compilation and Installation
 
-###Prerequisites
+### Prerequisites
 
 To compile this plugin, you need:
 
@@ -12,7 +12,7 @@ To compile this plugin, you need:
 
 * Score-P
 
-###Build Options
+### Build Options
 
 * `-DCMAKE_INSTALL_PREFIX`
 
@@ -22,7 +22,7 @@ To compile this plugin, you need:
 
     Enables measurement of freshness counter.
 
-###Building
+### Building
 
 1. Create build directory
 
@@ -45,7 +45,7 @@ To compile this plugin, you need:
 
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`
 
-##Usage
+## Usage
 
 1. Compile your program as usual with Score-P.
 
@@ -58,7 +58,7 @@ To compile this plugin, you need:
 
 4. After run, the metric should be included.
 
-###If anything fails
+### If anything fails
 
 1. Check whether the plugin library can be loaded from the `LD_LIBRARY_PATH`.
 
@@ -66,6 +66,6 @@ To compile this plugin, you need:
 
 3. Write a mail to the author.
 
-##Authors
+## Authors
 
 * Mario Bielert (mario.bielert at tu-dresden dot de)
